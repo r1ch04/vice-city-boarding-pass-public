@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f7f6f2">
+  <meta name="theme-color" content="#171120">
   <meta name="description" content="繁體中文登機證設計室。自訂你的航線、旅客、航班與票面，匯出高清 PNG 或 PDF 紀念登機證。">
   <title>DEPARTURE.｜登機證設計室</title>
   <link rel="preconnect" href="https://api.fontshare.com">
@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./vice.css">
   <script src="./vendor/lucide.min.js" defer></script>
   <script src="./vendor/jspdf.umd.min.js" defer></script>
   <script src="./app.js" defer></script>
@@ -26,8 +27,8 @@
 
   <main>
     <section class="intro" aria-labelledby="title">
-      <div><div class="eyebrow">A LITTLE TICKET. A NEW CHAPTER.</div><h1 id="title">下一站，由你決定<span>。</span></h1><p>把想去的地方，做成一張值得收藏的登機證。</p></div>
-      <div class="intro-stamp"><span>YOUR JOURNEY</span><strong>YOUR TICKET.</strong><span>DESIGNED BY YOU</span></div>
+      <div><div class="eyebrow">FLYUS / VICE CITY BOARDING STUDIO</div><h1 id="title">下一站，罪惡城<span>。</span></h1><p>填上你的名字，把夢想中的下一站帶走。</p></div>
+      <div class="intro-stamp"><span>WELCOME TO</span><strong>VICE CITY</strong><span>THE GOODLIFE STATE</span></div>
     </section>
 
     <section class="workspace" aria-label="登機證設計工作區">
@@ -86,17 +87,26 @@
             <div class="form-section">
               <h3><span class="section-index">05</span>航空公司與文字</h3>
               <label for="airline">航空公司名稱</label><input id="airline" name="airline" value="flyUS" maxlength="18" required>
-              <label for="tagline">航空公司標語</label><input id="tagline" name="tagline" value="LIVE A LITTLE. FLY WITH US." maxlength="46">
-              <label for="message">票面寄語</label><input id="message" name="message" value="下一站，罪惡城。THE GOODLIFE AWAITS." maxlength="64">
+              <label for="tagline">航空公司標語</label><input id="tagline" name="tagline" value="活得精彩一點，和我們一起飛翔！" maxlength="46">
+              <label for="message">票面寄語</label><input id="message" name="message" value="The Goodlife State" maxlength="64">
               <label for="language">票面語言</label><select id="language" name="language"><option value="bilingual">繁體中文＋英文</option><option value="zh">繁體中文</option><option value="en">English</option></select>
             </div>
             <div class="form-section">
               <h3><span class="section-index">06</span>票面細節</h3>
-              <label for="accent">自訂航空主色</label><div class="color-input"><input type="color" id="accent" name="accent" value="#213b51"><label for="accentHex" class="sr-only">航空主色色碼</label><input type="text" id="accentHex" name="accentHex" class="mono" value="#213B51" maxlength="7" pattern="#[A-Fa-f0-9]{6}" aria-label="航空主色色碼"><span>套用至票頭與重點欄位</span></div>
+              <label for="accent">票面文字主色</label><div class="color-input"><input type="color" id="accent" name="accent" value="#24283f"><label for="accentHex" class="sr-only">票面文字色碼</label><input type="text" id="accentHex" name="accentHex" class="mono" value="#24283F" maxlength="7" pattern="#[A-Fa-f0-9]{6}" aria-label="票面文字色碼"><span>套用至代碼、文字與裝飾條碼</span></div>
               <label class="switch-row" for="showStub"><span>顯示可撕式票根<small>保留紙本登機證的經典比例</small></span><input id="showStub" name="showStub" type="checkbox" role="switch" checked></label>
               <label class="switch-row" for="showBarcode"><span>顯示裝飾條碼<small>不含有效票務資料</small></span><input id="showBarcode" name="showBarcode" type="checkbox" role="switch" checked></label>
               <label class="switch-row" for="showMessage"><span>顯示票面寄語<small>為這趟旅程留下一句話</small></span><input id="showMessage" name="showMessage" type="checkbox" role="switch" checked></label>
-              <p class="field-help">紀念票標示將固定保留，不影響自由設計。</p>
+              <label class="switch-row" for="showNotice"><span>顯示紀念票標示<small>自行選擇是否在票面加入紀念字樣</small></span><input id="showNotice" name="showNotice" type="checkbox" role="switch"></label>
+            </div>
+            <div class="form-section">
+              <h3><span class="section-index">07</span>背景與氛圍</h3>
+              <button class="secondary-button full-width" id="designGalleryBtn" type="button"><i data-lucide="images"></i>選擇 Rockstar 官方截圖</button>
+              <label for="backgroundZoom">背景縮放 <output id="backgroundZoomValue">100%</output></label><input id="backgroundZoom" name="backgroundZoom" type="range" min="100" max="200" value="100">
+              <label for="backgroundX">背景水平位置 <output id="backgroundXValue">50%</output></label><input id="backgroundX" name="backgroundX" type="range" min="0" max="100" value="50">
+              <label for="backgroundY">背景垂直位置 <output id="backgroundYValue">50%</output></label><input id="backgroundY" name="backgroundY" type="range" min="0" max="100" value="50">
+              <label for="overlay">柔霧遮罩 <output id="overlayValue">58%</output></label><input id="overlay" name="overlay" type="range" min="0" max="90" value="58">
+              <p class="field-help">遮罩越低，底圖越清晰；遮罩越高，文字越清楚。</p>
             </div>
           </section>
         </form>
@@ -105,19 +115,19 @@
       </aside>
 
       <section class="preview-workspace" aria-labelledby="previewTitle">
-        <div class="preview-toolbar"><div><span class="live-dot"></span><h2 id="previewTitle">即時預覽</h2><span class="preview-tag">LIVE PREVIEW</span></div><button id="zoomBtn" class="text-button" title="放大檢視登機證"><i data-lucide="maximize"></i><span>放大檢視</span></button></div>
+        <div class="preview-toolbar"><div><span class="live-dot"></span><h2 id="previewTitle">你的登機證</h2><span class="preview-tag">LIVE PREVIEW</span></div><div class="preview-actions"><button id="galleryBtn" class="text-button"><i data-lucide="images"></i><span>選擇背景</span></button><button id="zoomBtn" class="text-button" title="放大檢視登機證"><i data-lucide="maximize"></i><span>放大檢視</span></button></div></div>
         <div class="preview-stage">
           <div class="canvas-caption"><span>ONE WAY</span><span id="routeCaption">LOS SANTOS → VICE CITY</span><span>NO. 001</span></div>
           <div class="ticket-holder" id="ticketHolder" role="img" aria-label="自訂紀念登機證即時預覽"></div>
           <div class="canvas-bottom"><span><i data-lucide="scissors"></i>你的下一段故事，從這裡起飛。</span><span id="dimensionLabel" class="mono">3600 × 1440 PX</span></div>
         </div>
-
+        <div class="background-bar"><img id="selectedBackgroundThumb" src="./assets/palm-sunset.webp" width="72" height="44" alt="目前選用的票面背景"><div><span class="background-kicker">TICKET BACKGROUND</span><strong id="backgroundName">棕櫚落日</strong></div><span id="backgroundStatus" role="status"></span><button class="text-button" id="uploadBackgroundBtn"><i data-lucide="upload"></i>上傳圖片</button><input type="file" id="backgroundFile" accept="image/jpeg,image/png,image/webp" hidden></div>
         <div class="template-section">
-          <div class="template-heading"><h3>選一種旅行的心情</h3><span>3 款票面風格</span></div>
+          <div class="template-heading"><h3>為這趟旅程，選一種色調。</h3><span>3 款氛圍濾鏡</span></div>
           <div class="template-grid" role="group" aria-label="票面風格">
-            <button class="template selected" data-theme="classic" aria-pressed="true"><span class="mini-ticket navy"><span>flyUS</span><b>LSX <i data-lucide="plane"></i> VCI</b><span class="mini-lines"></span></span><span class="template-name">經典航空<span>THE ORIGINAL</span></span><span class="theme-check"><i data-lucide="check"></i></span></button>
-            <button class="template" data-theme="sunset" aria-pressed="false"><span class="mini-ticket sunset"><span>flyUS</span><b>LSX <i data-lucide="plane"></i> VCI</b><span class="mini-lines"></span></span><span class="template-name">罪惡城日落<span>VICE CITY EDITION</span></span><span class="theme-check"><i data-lucide="check"></i></span></button>
-            <button class="template" data-theme="thermal" aria-pressed="false"><span class="mini-ticket thermal"><span>BOARDING PASS</span><b>LSX <i data-lucide="plane"></i> VCI</b><span class="mini-lines"></span></span><span class="template-name">黑白熱感<span>LESS IS MORE</span></span><span class="theme-check"><i data-lucide="check"></i></span></button>
+            <button class="template selected" data-theme="classic" aria-pressed="true"><span class="mini-ticket navy"><span>flyUS</span><b>LSX <i data-lucide="plane"></i> VCI</b><span class="mini-lines"></span></span><span class="template-name">經典罪惡城<span>VICE CITY ORIGINAL</span></span><span class="theme-check"><i data-lucide="check"></i></span></button>
+            <button class="template" data-theme="sunset" aria-pressed="false"><span class="mini-ticket sunset"><span>flyUS</span><b>LSX <i data-lucide="plane"></i> VCI</b><span class="mini-lines"></span></span><span class="template-name">落日海岸<span>SUNSET BOULEVARD</span></span><span class="theme-check"><i data-lucide="check"></i></span></button>
+            <button class="template" data-theme="thermal" aria-pressed="false"><span class="mini-ticket thermal"><span>flyUS</span><b>LSX <i data-lucide="plane"></i> VCI</b><span class="mini-lines"></span></span><span class="template-name">霓虹夜航<span>AFTER HOURS</span></span><span class="theme-check"><i data-lucide="check"></i></span></button>
           </div>
         </div>
         <section class="export-bar" aria-label="匯出登機證">
@@ -131,8 +141,9 @@
   </main>
   <footer class="site-footer"><span>DEPARTURE. <span>MADE FOR THE JOURNEY.</span></span><span>非官方同人創作 · 僅供紀念，不可用於乘機</span><a href="https://gamestarvi.com/ticket.html" target="_blank" rel="noopener">靈感來自 GameStar <i data-lucide="arrow-up-right"></i></a></footer>
 
-  <dialog id="helpDialog" class="info-dialog"><div class="dialog-heading"><h2>讓下一站，成為你的收藏。</h2><button class="icon-button close-dialog" aria-label="關閉使用說明"><i data-lucide="x"></i></button></div><p>這是一個同人紀念登機證設計工具，不連接任何航空公司或票務系統。</p><ol><li>在「旅客與航線」填入姓名，選擇或自訂出發及抵達機場。</li><li>在「航班細節」設定時間、登機門、艙等與行李資料。</li><li>挑選風格，或在「票面設計」修改航空名稱、語言與配色。</li><li>下載 3 倍解析度 PNG，或 240 毫米寬的 PDF 票面。</li></ol><p>所有欄位均為自由創作內容。機場選單只提供名稱預設，不提供航班查詢；條碼為無法驗票的裝飾圖樣。</p><p>頁面不會自動保存資料。使用編輯器下方的儲存按鈕，可下載 JSON 設計檔，下次再載入繼續編輯。</p><button class="primary-button close-dialog">開始設計<i data-lucide="arrow-right"></i></button></dialog>
+  <dialog id="helpDialog" class="info-dialog"><div class="dialog-heading"><h2>讓下一站，成為你的收藏。</h2><button class="icon-button close-dialog" aria-label="關閉使用說明"><i data-lucide="x"></i></button></div><p>這是一個同人登機證設計工具，不連接任何航空公司或票務系統。</p><ol><li>選擇棕櫚落日底圖、Rockstar 官方截圖，或上傳自己的圖片。</li><li>填寫旅客、航線與航班資訊，所有內容都會同步到主票與票根。</li><li>在「票面設計」修改文字、語言、配色與背景位置，也能開關紀念票標示。</li><li>下載 3600 × 1440 PNG 或 240 × 96 毫米 PDF。</li></ol><p>背景圖庫為本版收錄的官方截圖，可前往 <a href="https://www.rockstargames.com/VI/media/screenshots" target="_blank" rel="noopener">Rockstar 官方網站</a> 查看原始素材。圖片與遊戲相關權利歸原權利人所有。</p><p>頁面不會自動保存資料。點選儲存按鈕下載 JSON 設計檔，即可連同自訂背景一起保存，下次載入繼續修改。</p><button class="primary-button close-dialog">開始設計<i data-lucide="arrow-right"></i></button></dialog>
   <dialog id="zoomDialog" class="zoom-dialog"><div class="dialog-heading"><div><h2>你的紀念登機證</h2><p>小螢幕可左右滑動，查看完整細節。</p></div><button class="icon-button close-dialog" aria-label="關閉放大預覽"><i data-lucide="x"></i></button></div><div class="zoom-scroll"><div id="zoomTicket"></div></div></dialog>
   <dialog id="resetDialog" class="info-dialog"><div class="dialog-heading"><h2>重新開始這趟旅程？</h2><button class="icon-button close-dialog" aria-label="取消還原"><i data-lucide="x"></i></button></div><p>所有欄位和票面風格將恢復預設。你可以先取消，下載設計檔保留目前的版本。</p><div class="dialog-actions"><button class="secondary-button close-dialog">保留目前設計</button><button id="confirmReset" class="primary-button">還原預設</button></div></dialog>
+  <dialog id="galleryDialog" class="gallery-dialog"><div class="dialog-heading"><div><div class="eyebrow">A POSTCARD FROM LEONIDA</div><h2>挑一幕，你想抵達的風景。</h2><p>你的棕櫚落日底圖，和 Rockstar 官方截圖。</p></div><button class="icon-button close-dialog" aria-label="關閉背景圖庫"><i data-lucide="x"></i></button></div><div class="gallery-filters"><label class="sr-only" for="gallerySearch">搜尋截圖</label><input id="gallerySearch" type="search" placeholder="搜尋場景、地點或人物…"><label class="sr-only" for="galleryCategory">截圖分類</label><select id="galleryCategory"><option value="all">所有場景</option></select></div><div id="galleryGrid" class="gallery-grid"></div><div class="gallery-footer"><span id="galleryCount"></span><div class="gallery-pagination"><button class="icon-button" id="galleryPrev" aria-label="上一頁截圖"><i data-lucide="chevron-left"></i></button><span id="galleryPage"></span><button class="icon-button" id="galleryNext" aria-label="下一頁截圖"><i data-lucide="chevron-right"></i></button></div><a href="https://www.rockstargames.com/VI/media/screenshots" target="_blank" rel="noopener">前往 Rockstar 官網<i data-lucide="arrow-up-right"></i></a></div></dialog>
 </body>
 </html>
