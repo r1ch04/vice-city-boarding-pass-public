@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f6f2">
+  <meta name="description" content="繁體中文登機證設計室。自訂你的航線、旅客、航班與票面，匯出高清 PNG 或 PDF 紀念登機證。">
+  <title>DEPARTURE.｜登機證設計室</title>
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./vendor/lucide.min.js" defer></script>
+  <script src="./vendor/jspdf.umd.min.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#editor">跳至編輯器</a>
+  <header class="site-header">
+    <a class="wordmark" href="./" aria-label="DEPARTURE 首頁">DEPARTURE<span>.</span></a>
+    <span class="header-label">BOARDING PASS STUDIO</span>
+    <div class="header-actions"><button class="text-button" id="helpBtn"><i data-lucide="circle-help"></i><span>使用說明</span></button><button class="primary-button" id="quickExportBtn"><i data-lucide="download"></i><span>匯出登機證</span></button></div>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="title">
+      <div><div class="eyebrow">A LITTLE TICKET. A NEW CHAPTER.</div><h1 id="title">下一站，由你決定<span>。</span></h1><p>把想去的地方，做成一張值得收藏的登機證。</p></div>
+      <div class="intro-stamp"><span>YOUR JOURNEY</span><strong>YOUR TICKET.</strong><span>DESIGNED BY YOU</span></div>
+    </section>
+
+    <section class="workspace" aria-label="登機證設計工作區">
+      <aside class="editor" id="editor">
+        <div class="editor-heading"><h2>自訂登機證</h2><span class="small-caps">THE DETAILS</span></div>
+        <div class="tabs" role="tablist" aria-label="編輯分類">
+          <button role="tab" id="tab-route" aria-controls="panel-route" aria-selected="true" tabindex="0" data-tab="route">旅客與航線</button>
+          <button role="tab" id="tab-flight" aria-controls="panel-flight" aria-selected="false" tabindex="-1" data-tab="flight">航班細節</button>
+          <button role="tab" id="tab-design" aria-controls="panel-design" aria-selected="false" tabindex="-1" data-tab="design">票面設計</button>
+        </div>
+        <form id="ticketForm" novalidate>
+          <section class="tab-panel" id="panel-route" role="tabpanel" aria-labelledby="tab-route">
+            <div class="form-section">
+              <h3><span class="section-index">01</span>旅客資料</h3>
+              <label for="passenger">乘客姓名 <span>PASSENGER NAME</span></label>
+              <input id="passenger" name="passenger" value="JASON / MICHAEL" maxlength="28" placeholder="英文或中文姓名" autocomplete="off" required>
+              <p class="field-help">支援中英文；英文姓／名格式更有登機證的感覺。</p>
+              <div class="field-grid">
+                <div><label for="cabin">艙等</label><select id="cabin" name="cabin"><option value="economy">經濟艙 ECONOMY</option><option value="premium">豪華經濟艙 PREMIUM</option><option value="business" selected>商務艙 BUSINESS</option><option value="first">頭等艙 FIRST</option></select></div>
+                <div><label for="seat">座位</label><input id="seat" name="seat" value="06A" maxlength="5" class="mono uppercase" placeholder="06A" required></div>
+              </div>
+            </div>
+            <div class="form-section route-fields">
+              <div class="section-row"><h3><span class="section-index">02</span>你的航線</h3><button class="text-button compact" id="swapBtn" type="button" title="交換出發與抵達機場"><i data-lucide="arrow-down-up"></i>交換</button></div>
+              <label for="originPreset">出發機場 <span>DEPARTURE</span></label>
+              <select id="originPreset" aria-label="出發機場預設"><option value="LSX">洛聖都國際機場（LSX）</option><option value="TPE">臺灣桃園國際機場（TPE）</option><option value="HKG">香港國際機場（HKG）</option><option value="NRT">成田國際機場（NRT）</option><option value="LAX">洛杉磯國際機場（LAX）</option><option value="custom">自訂機場</option></select>
+              <div class="field-grid airport-grid"><div><label class="sr-only" for="originCode">出發機場代碼</label><input id="originCode" name="originCode" value="LSX" maxlength="3" class="mono uppercase code-input" placeholder="代碼" required pattern="[A-Za-z]{3}"></div><div><label class="sr-only" for="originCity">出發城市</label><input id="originCity" name="originCity" value="洛聖都" maxlength="16" placeholder="出發城市" required></div></div>
+              <label for="originAirport" class="sr-only">出發機場名稱</label><input id="originAirport" name="originAirport" value="洛聖都國際機場" maxlength="28" placeholder="出發機場全名">
+              <div class="route-connector"><span></span><i data-lucide="plane"></i><span></span></div>
+              <label for="destinationPreset">抵達機場 <span>ARRIVAL</span></label>
+              <select id="destinationPreset" aria-label="抵達機場預設"><option value="VCI">罪惡城國際機場（VCI）</option><option value="TPE">臺灣桃園國際機場（TPE）</option><option value="HKG">香港國際機場（HKG）</option><option value="NRT">成田國際機場（NRT）</option><option value="LAX">洛杉磯國際機場（LAX）</option><option value="custom">自訂機場</option></select>
+              <div class="field-grid airport-grid"><div><label class="sr-only" for="destinationCode">抵達機場代碼</label><input id="destinationCode" name="destinationCode" value="VCI" maxlength="3" class="mono uppercase code-input" placeholder="代碼" required pattern="[A-Za-z]{3}"></div><div><label class="sr-only" for="destinationCity">抵達城市</label><input id="destinationCity" name="destinationCity" value="罪惡城" maxlength="16" placeholder="抵達城市" required></div></div>
+              <label for="destinationAirport" class="sr-only">抵達機場名稱</label><input id="destinationAirport" name="destinationAirport" value="罪惡城國際機場" maxlength="28" placeholder="抵達機場全名">
+            </div>
+          </section>
+
+          <section class="tab-panel" id="panel-flight" role="tabpanel" aria-labelledby="tab-flight" hidden>
+            <div class="form-section">
+              <h3><span class="section-index">03</span>航班與時間</h3>
+              <div class="field-grid"><div><label for="flight">航班號碼</label><input id="flight" name="flight" value="FU 061" maxlength="10" class="mono uppercase" required></div><div><label for="aircraft">機型</label><input id="aircraft" name="aircraft" value="BOEING 787-9" maxlength="20"></div></div>
+              <label for="departureDate">出發日期</label><input id="departureDate" name="departureDate" type="date" value="2026-11-19" min="1900-01-01" max="2199-12-31" required>
+              <div class="field-grid"><div><label for="boardingTime">登機時間</label><input id="boardingTime" name="boardingTime" type="time" value="09:20" required></div><div><label for="departureTime">起飛時間</label><input id="departureTime" name="departureTime" type="time" value="10:00" required></div></div>
+              <div class="field-grid"><div><label for="arrivalDate">抵達日期</label><input id="arrivalDate" name="arrivalDate" type="date" value="2026-11-19" min="1900-01-01" max="2199-12-31" required></div><div><label for="arrivalTime">抵達時間</label><input id="arrivalTime" name="arrivalTime" type="time" value="18:30" required></div></div>
+              <p class="field-help">所有時間皆為機場當地時間；日期不代表遊戲發售資訊。</p>
+            </div>
+            <div class="form-section">
+              <h3><span class="section-index">04</span>登機與票務</h3>
+              <div class="field-grid three"><div><label for="terminal">航廈</label><input id="terminal" name="terminal" value="T2" maxlength="6"></div><div><label for="gate">登機門</label><input id="gate" name="gate" value="B12" maxlength="5" required></div><div><label for="zone">登機區</label><input id="zone" name="zone" value="01" maxlength="4"></div></div>
+              <div class="field-grid"><div><label for="booking">訂位代號</label><input id="booking" name="booking" value="VC6LSX" maxlength="8" class="mono uppercase"></div><div><label for="sequence">登機序號</label><input id="sequence" name="sequence" value="0019" maxlength="5" class="mono"></div></div>
+              <label for="ticketNumber">電子機票號碼</label><input id="ticketNumber" name="ticketNumber" value="061-2026111906" maxlength="19" class="mono">
+              <div class="field-grid"><div><label for="baggage">託運行李</label><select id="baggage" name="baggage"><option value="0 PC">無託運行李</option value="1 PC / 23 KG">1 件／23 KG</option value="2 PC / 23 KG">2 件／各 23 KG</option value="2 PC / 32 KG" selected>2 件／各 32 KG</option><option value="3 PC / 32 KG">3 件／各 32 KG</option></select></div><div><label for="status">旅客待遇</label><select id="status" name="status"><option value="PRIORITY" selected>優先登機</option><option value="STANDARD">一般登機</option><option value="LOUNGE ACCESS">貴賓室禮遇</option></select></div></div>
+            </div>
+          </section>
+
+          <section class="tab-panel" id="panel-design" role="tabpanel" aria-labelledby="tab-design" hidden>
+            <div class="form-section">
+              <h3><span class="section-index">05</span>航空公司與文字</h3>
+              <label for="airline">航空公司名稱</label><input id="airline" name="airline" value="flyUS" maxlength="18" required>
+              <label for="tagline">航空公司標語</label><input id="tagline" name="tagline" value="LIVE A LITTLE. FLY WITH US." maxlength="46">
+              <label for="message">票面寄語</label><input id="message" name="message" value="下一站，罪惡城。THE GOODLIFE AWAITS." maxlength="64">
+              <label for="language">票面語言</label><select id="language" name="language"><option value="bilingual">繁體中文＋英文</option><option value="zh">繁體中文</option><option value="en">English</option></select>
+            </div>
+            <div class="form-section">
+              <h3><span class="section-index">06</span>票面細節</h3>
+              <label for="accent">自訂航空主色</label><div class="color-input"><input type="color" id="accent" name="accent" value="#213b51"><span id="colorValue" class="mono">#213B51</span><span>套用至票頭與重點欄位</span></div>
+              <label class="switch-row" for="showStub"><span>顯示可撕式票根<small>保留紙本登機證的經典比例</small></span><input id="showStub" name="showStub" type="checkbox" role="switch" checked></label>
+              <label class="switch-row" for="showBarcode"><span>顯示裝飾條碼<small>不含有效票務資料</small></span><input id="showBarcode" name="showBarcode" type="checkbox" role="switch" checked></label>
+              <label class="switch-row" for="showMessage"><span>顯示票面寄語<small>為這趟旅程留下一句話</small></span><input id="showMessage" name="showMessage" type="checkbox" role="switch" checked></label>
+              <p class="field-help">紀念票標示將固定保留，不影響自由設計。</p>
+            </div>
+          </section>
+        </form>
+        <div class="editor-footer"><button id="resetBtn" class="text-button"><i data-lucide="rotate-ccw"></i>還原預設</button><div class="file-actions"><button id="loadBtn" class="icon-button" aria-label="載入設計檔" title="載入設計檔"><i data-lucide="folder-open"></i></button><button id="saveBtn" class="icon-button" aria-label="儲存設計檔" title="儲存設計檔"><i data-lucide="save"></i></button></div></div>
+        <input type="file" id="loadFile" accept=".json,application/json" hidden>
+      </aside>
+
+      <section class="preview-workspace" aria-labelledby="previewTitle">
+        <div class="preview-toolbar"><div><span class="live-dot"></span><h2 id="previewTitle">即時預覽</h2><span class="preview-tag">LIVE PREVIEW</span></div><button id="zoomBtn" class="text-button" title="放大檢視登機證"><i data-lucide="maximize"></i><span>放大檢視</span></button></div>
+        <div class="preview-stage">
+          <div class="canvas-caption"><span>ONE WAY</span><span id="routeCaption">LOS SANTOS → VICE CITY</span><span>NO. 001</span></div>
+          <div class="ticket-holder" id="ticketHolder" role="img" aria-label="自訂紀念登機證即時預覽"></div>
+          <div class="canvas-bottom"><span><i data-lucide="scissors"></i>你的下一段故事，從這裡起飛。</span><span id="dimensionLabel" class="mono">3600 × 1440 PX</span></div>
+        </div>
+
+        <div class="template-section">
+          <div class="template-heading"><h3>選一種旅行的心情</h3><span>3 款票面風格</span></div>
+          <div class="template-grid" role="group" aria-label="票面風格">
+            <button class="template selected" data-theme="classic" aria-pressed="true"><span class="mini-ticket navy"><span>flyUS</span><b>LSX <i data-lucide="plane"></i> VCI</b><span class="mini-lines"></span></span><span class="template-name">經典航空<span>THE ORIGINAL</span></span><span class="theme-check"><i data-lucide="check"></i></span></button>
+            <button class="template" data-theme="sunset" aria-pressed="false"><span class="mini-ticket sunset"><span>flyUS</span><b>LSX <i data-lucide="plane"></i> VCI</b><span class="mini-lines"></span></span><span class="template-name">罪惡城日落<span>VICE CITY EDITION</span></span><span class="theme-check"><i data-lucide="check"></i></span></button>
+            <button class="template" data-theme="thermal" aria-pressed="false"><span class="mini-ticket thermal"><span>BOARDING PASS</span><b>LSX <i data-lucide="plane"></i> VCI</b><span class="mini-lines"></span></span><span class="template-name">黑白熱感<span>LESS IS MORE</span></span><span class="theme-check"><i data-lucide="check"></i></span></button>
+          </div>
+        </div>
+        <section class="export-bar" aria-label="匯出登機證">
+          <div><span class="export-kicker">READY FOR TAKEOFF?</span><h3>帶走你的登機證。</h3><p>高清輸出，讓每個細節都值得收藏。</p></div>
+          <div class="export-controls"><label for="exportFormat" class="sr-only">匯出格式</label><select id="exportFormat"><option value="png">PNG 圖片 · 3× 高清</option><option value="pdf">PDF · 原尺寸票面</option></select><button class="primary-button" id="exportBtn"><i data-lucide="download"></i><span>下載登機證</span></button></div>
+        </section>
+        <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+        <div class="privacy-note"><i data-lucide="shield-check"></i><span>資料只在目前頁面處理，不會上傳旅客資訊。離開前可儲存設計檔。</span></div>
+      </section>
+    </section>
+  </main>
+  <footer class="site-footer"><span>DEPARTURE. <span>MADE FOR THE JOURNEY.</span></span><span>非官方同人創作 · 僅供紀念，不可用於乘機</span><a href="https://gamestarvi.com/ticket.html" target="_blank" rel="noopener">靈感來自 GameStar <i data-lucide="arrow-up-right"></i></a></footer>
+
+  <dialog id="helpDialog" class="info-dialog"><div class="dialog-heading"><h2>讓下一站，成為你的收藏。</h2><button class="icon-button close-dialog" aria-label="關閉使用說明"><i data-lucide="x"></i></button></div><p>這是一個同人紀念登機證設計工具，不連接任何航空公司或票務系統。</p><ol><li>在「旅客與航線」填入姓名，選擇或自訂出發及抵達機場。</li><li>在「航班細節」設定時間、登機門、艙等與行李資料。</li><li>挑選風格，或在「票面設計」修改航空名稱、語言與配色。</li><li>下載 3 倍解析度 PNG，或 240 毫米寬的 PDF 票面。</li></ol><p>所有欄位均為自由創作內容。機場選單只提供名稱預設，不提供航班查詢；條碼為無法驗票的裝飾圖樣。</p><p>頁面不會自動保存資料。使用編輯器下方的儲存按鈕，可下載 JSON 設計檔，下次再載入繼續編輯。</p><button class="primary-button close-dialog">開始設計<i data-lucide="arrow-right"></i></button></dialog>
+  <dialog id="zoomDialog" class="zoom-dialog"><div class="dialog-heading"><div><h2>你的紀念登機證</h2><p>小螢幕可左右滑動，查看完整細節。</p></div><button class="icon-button close-dialog" aria-label="關閉放大預覽"><i data-lucide="x"></i></button></div><div class="zoom-scroll"><div id="zoomTicket"></div></div></dialog>
+  <dialog id="resetDialog" class="info-dialog"><div class="dialog-heading"><h2>重新開始這趟旅程？</h2><button class="icon-button close-dialog" aria-label="取消還原"><i data-lucide="x"></i></button></div><p>所有欄位和票面風格將恢復預設。你可以先取消，下載設計檔保留目前的版本。</p><div class="dialog-actions"><button class="secondary-button close-dialog">保留目前設計</button><button id="confirmReset" class="primary-button">還原預設</button></div></dialog>
+</body>
+</html>
