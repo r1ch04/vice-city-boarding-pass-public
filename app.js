@@ -18,6 +18,7 @@ const airports = {
   NRT:["東京","成田國際機場","TOKYO"],
   LAX:["洛杉磯","洛杉磯國際機場","LOS ANGELES"]
 };
+const airportEnglish={LSX:"LOS SANTOS INTERNATIONAL AIRPORT",VCI:"VICE CITY INTERNATIONAL AIRPORT",TPE:"TAIWAN TAOYUAN INTERNATIONAL AIRPORT",HKG:"HONG KONG INTERNATIONAL AIRPORT",NRT:"NARITA INTERNATIONAL AIRPORT",LAX:"LOS ANGELES INTERNATIONAL AIRPORT"};
 const cabins={economy:["經濟艙","ECONOMY"],premium:["豪華經濟艙","PREMIUM ECONOMY"],business:["商務艙","BUSINESS CLASS"],first:["頭等艙","FIRST CLASS"]};
 const labels = {
   boarding:["登機證","BOARDING PASS"],passenger:["旅客姓名","PASSENGER NAME"],from:["出發地","FROM"],to:["目的地","TO"],flight:["航班","FLIGHT"],date:["日期","DATE"],boardingTime:["登機時間","BOARDING"],departure:["起飛時間","DEPARTURE"],arrival:["抵達時間","ARRIVAL"],terminal:["航廈","TERMINAL"],gate:["登機門","GATE"],seat:["座位","SEAT"],zone:["登機區","ZONE"],booking:["訂位代號","BOOKING REF."],baggage:["託運行李","BAGGAGE"],ticket:["電子機票","E-TICKET"],sequence:["序號","SEQ."],notice:["紀念票・非有效乘機憑證","SOUVENIR · NOT VALID FOR TRAVEL"]
@@ -25,6 +26,17 @@ const labels = {
 const esc = str => String(str??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[c]));
 const label = key => {const [zh,en]=labels[key];return state.language==="zh"?zh:state.language==="en"?en:`${zh} ${en}`};
 const color = () => /^#[\da-f]{6}$/i.test(state.accent)?state.accent:defaults.accent;
+function luminance(hex){
+  const rgb=hex.match(/[a-f\d]{2}/gi).map(v=>parseInt(v,16)/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4);
+  return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722;
+}
+function readableInk(hex,paper){
+  let rgb=hex.match(/[a-f\d]{2}/gi).map(v=>parseInt(v,16)),result=hex;
+  for(let i=0;i<20&&(luminance(paper)+.05)/(luminance(result)+.05)<4.5;i++){
+    rgb=rgb.map(v=>Math.round(v*.88));result="#"+rgb.map(v=>v.toString(16).padStart(2,"0")).join("");
+  }
+  return result;
+}
 function safeValue(v,fallback="—"){return String(v||fallback)}
 function formatDate(value,compact=false){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(value||""))return "—";
@@ -40,7 +52,8 @@ function cityName(prefix){
 function ticketSVG(){
   const W=1200,H=480,mainW=state.showStub?870:1200;
   const thermal=state.theme==="thermal",sunset=state.theme==="sunset";
-  const ink=thermal?"#242823":"#24333e",muted=thermal?"#555b52":"#5d6a70",accent=color(),paper=sunset?"#fff8f1":thermal?"#fffef8":"#fffefa";
+  const ink=thermal?"#242823":"#24333e",muted=thermal?"#555b52":"#5d6a70",brand=color(),paper=sunset?"#fff8f1":thermal?"#fffef8":"#fffefa",accent=readableInk(brand,paper);
+  const headerInk=1.05/(luminance(brand)+.05)>=4.5?"#ffffff":(luminance(brand)+.05)/(luminance("#172b33")+.05)>=4.5?"#172b33":"#000000";
   const pale=thermal?"#eeeee5":sunset?"#f4e2d9":"#eaf0f2";
   const normalFont=thermal?"'Courier New','Noto Sans TC','Microsoft JhengHei',monospace":"'Noto Sans TC','Microsoft JhengHei','PingFang TC',sans-serif";
   const text=(x,y,value,size=20,weight=500,fill=ink,other="")=>`<text x="${x}" y="${y}" fill="${fill}" font-family="${normalFont}" font-size="${size}" font-weight="${weight}" ${other}>${esc(value)}</text>`;
@@ -56,10 +69,10 @@ function ticketSVG(){
   const cabinText=state.language==="zh"?cabin[0]:state.language==="en"?cabin[1]:`${cabin[0]} ${cabin[1]}`;
   // Lucide's plane glyph, used as a standard pictogram rather than a custom airline mark.
   const plane=(x,y,scale=1,fill=accent)=>`<g transform="translate(${x} ${y}) scale(${scale})" stroke="${fill}" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(45 12 12)"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></g></g>`;
-  let out=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="ticket-title"><title id="ticket-title">${esc(state.passenger)}，${esc(state.originCode)} 飛往 ${esc(state.destinationCode)}，紀念登機證，非有效乘機憑證</title><defs><clipPath id="ticketClip"><rect width="1200" height="480" rx="8"/></clipPath></defs><g clip-path="url(#ticketClip)"><rect width="${W}" height="${H}" fill="${paper}"/><rect width="${W}" height="70" fill="${accent}"/>`;
-  out+=fit(40,46,state.airline,220,37,800,"#fff",`font-style="${thermal?"normal":"italic"}"`);
-  out+=fit(260,42,state.tagline,mainW-560,14,500,"#ffffff",`letter-spacing="1"`);
-  out+=fit(mainW-38,42,label("boarding"),245,18,600,"#fff",'text-anchor="end" letter-spacing="1"');
+  let out=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="ticket-title"><title id="ticket-title">${esc(state.passenger)}，${esc(state.originCode)} 飛往 ${esc(state.destinationCode)}，紀念登機證，非有效乘機憑證</title><defs><clipPath id="ticketClip"><rect width="1200" height="480" rx="8"/></clipPath><mask id="ticketNotches"><rect width="1200" height="480" fill="white"/>${state.showStub?'<circle cx="870" cy="0" r="11" fill="black"/><circle cx="870" cy="480" r="11" fill="black"/>':""}</mask></defs><g clip-path="url(#ticketClip)" mask="url(#ticketNotches)"><rect width="${W}" height="${H}" fill="${paper}"/><rect width="${W}" height="70" fill="${brand}"/>`;
+  out+=fit(40,46,state.airline,205,37,800,headerInk,`font-style="${thermal?"normal":"italic"}"`);
+  out+=fit(285,42,state.tagline,mainW-610,14,500,headerInk,`letter-spacing="1"`);
+  out+=fit(mainW-38,42,label("boarding"),245,18,600,headerInk,'text-anchor="end" letter-spacing="1"');
   out+=text(airportStart,103,label("from"),15,400,muted);
   out+=text(airportEnd,103,label("to"),15,400,muted);
   out+=fit(mainW-40,103,`${state.aircraft}${state.showStub?"":` · ${label("sequence")} ${safeValue(state.sequence)}`}`,state.showStub?180:390,13,500,muted,'text-anchor="end"');
@@ -69,7 +82,7 @@ function ticketSVG(){
   out+=line(planeCenter-81,148,planeCenter-30,148,muted)+plane(planeCenter-19,128,1.65,accent)+line(planeCenter+39,148,planeCenter+90,148,muted);
   out+=fit(airportStart,213,cityName("origin"),mainW*.34,22,600)+fit(airportEnd,213,cityName("destination"),mainW*.34,22,600);
   const airportDesc = prefix => {
-    if(state.language==="en"&&airports[state[prefix+"Code"].toUpperCase()]&&state[prefix+"Airport"]===airports[state[prefix+"Code"].toUpperCase()][1])return `${cityName(prefix)} INTERNATIONAL AIRPORT`;
+    if(state.language==="en"&&airports[state[prefix+"Code"].toUpperCase()]&&state[prefix+"Airport"]===airports[state[prefix+"Code"].toUpperCase()][1])return airportEnglish[state[prefix+"Code"].toUpperCase()];
     return state[prefix+"Airport"];
   };
   out+=fit(airportStart,239,airportDesc("origin"),mainW*.38,15,400,muted)+fit(airportEnd,239,airportDesc("destination"),mainW*.38,15,400,muted);
@@ -95,8 +108,7 @@ function ticketSVG(){
   out+=fit(mainW-40,footY,label("notice"),state.showMessage?mainW*.38:mainW-80,12,600,accent,'text-anchor="end"');
   if(state.showStub){
     out+=line(870,0,870,480,"#c6cdc9",'stroke-dasharray="6 7" stroke-width="1.5"');
-    out+=`<circle cx="870" cy="0" r="11" fill="#e9ece9"/><circle cx="870" cy="480" r="11" fill="#e9ece9"/>`;
-    out+=fit(900,43,label("boarding"),270,18,600,"#fff");
+    out+=fit(900,43,label("boarding"),270,18,600,headerInk);
     out+=text(902,112,state.originCode.toUpperCase()||"---",38,800,accent)+text(1157,112,state.destinationCode.toUpperCase()||"---",38,800,accent,'text-anchor="end"')+plane(1015,86,1.3);
     out+=line(900,132,1170,132);
     out+=text(902,158,label("passenger"),14,400,muted)+fit(902,187,state.passenger,264,23,600);
@@ -148,7 +160,7 @@ function update(){
   const cap = prefix => {const a=airports[state[prefix+"Code"].toUpperCase()];return a&&a[0]===state[prefix+"City"]?a[2]:state[prefix+"City"]};
   const from=cap("origin"),to=cap("destination");
   $("routeCaption").textContent=`${from} → ${to}`;
-  $("colorValue").textContent=color().toUpperCase();
+  $("accentHex").value=color().toUpperCase();
   document.querySelectorAll("[data-theme]").forEach(b=>{const active=b.dataset.theme===state.theme;b.classList.toggle("selected",active);b.setAttribute("aria-pressed",String(active))});
 }
 function setTab(name,focus=false){
@@ -163,7 +175,7 @@ function validate(){
   }
   if(invalid.length){
     const el=invalid[0],panel=el.closest(".tab-panel");setTab(panel.id.replace("panel-",""));el.focus();
-    feedback(el.id.includes("Code")?"機場代碼請填入 3 個英文字母。":"請先補齊標示欄位，並確認日期與時間格式。",true);return false;
+    feedback(el.id.includes("Code")?"機場代碼請填入 3 個英文字母。":el.id==="accentHex"?"請輸入有效的 6 位色碼，例如 #213B51。":"請先補齊標示欄位，並確認日期與時間格式。",true);return false;
   }
   return true;
 }
@@ -237,6 +249,11 @@ document.addEventListener("DOMContentLoaded",()=>{
     if(["originCode","destinationCode","flight","seat","booking"].includes(el.name)){state[el.name]=el.value.toUpperCase();el.value=state[el.name]}
     el.removeAttribute("aria-invalid");syncPresets();update();
     if($("feedback").classList.contains("error"))feedback("");
+  });
+  $("accentHex").addEventListener("input",e=>{
+    if(/^#[\da-f]{6}$/i.test(e.target.value)){
+      state.accent=e.target.value;$("accent").value=state.accent;e.target.removeAttribute("aria-invalid");update();
+    }
   });
   document.querySelectorAll("[data-tab]").forEach(b=>{
     b.addEventListener("click",()=>setTab(b.dataset.tab));

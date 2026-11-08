@@ -21,7 +21,7 @@
   <header class="site-header">
     <a class="wordmark" href="./" aria-label="DEPARTURE 首頁">DEPARTURE<span>.</span></a>
     <span class="header-label">BOARDING PASS STUDIO</span>
-    <div class="header-actions"><button class="text-button" id="helpBtn"><i data-lucide="circle-help"></i><span>使用說明</span></button><button class="primary-button" id="quickExportBtn"><i data-lucide="download"></i><span>匯出登機證</span></button></div>
+    <div class="header-actions"><button class="text-button" id="helpBtn" aria-label="使用說明" title="使用說明"><i data-lucide="circle-help"></i><span>使用說明</span></button><button class="primary-button" id="quickExportBtn"><i data-lucide="download"></i><span>匯出登機證</span></button></div>
   </header>
 
   <main>
@@ -71,14 +71,14 @@
               <label for="departureDate">出發日期</label><input id="departureDate" name="departureDate" type="date" value="2026-11-19" min="1900-01-01" max="2199-12-31" required>
               <div class="field-grid"><div><label for="boardingTime">登機時間</label><input id="boardingTime" name="boardingTime" type="time" value="09:20" required></div><div><label for="departureTime">起飛時間</label><input id="departureTime" name="departureTime" type="time" value="10:00" required></div></div>
               <div class="field-grid"><div><label for="arrivalDate">抵達日期</label><input id="arrivalDate" name="arrivalDate" type="date" value="2026-11-19" min="1900-01-01" max="2199-12-31" required></div><div><label for="arrivalTime">抵達時間</label><input id="arrivalTime" name="arrivalTime" type="time" value="18:30" required></div></div>
-              <p class="field-help">所有時間皆為機場當地時間；日期不代表遊戲發售資訊。</p>
+              <p class="field-help">所有時間皆為機場當地時間；本頁日期不代表遊戲發售資訊。</p>
             </div>
             <div class="form-section">
               <h3><span class="section-index">04</span>登機與票務</h3>
               <div class="field-grid three"><div><label for="terminal">航廈</label><input id="terminal" name="terminal" value="T2" maxlength="6"></div><div><label for="gate">登機門</label><input id="gate" name="gate" value="B12" maxlength="5" required></div><div><label for="zone">登機區</label><input id="zone" name="zone" value="01" maxlength="4"></div></div>
               <div class="field-grid"><div><label for="booking">訂位代號</label><input id="booking" name="booking" value="VC6LSX" maxlength="8" class="mono uppercase"></div><div><label for="sequence">登機序號</label><input id="sequence" name="sequence" value="0019" maxlength="5" class="mono"></div></div>
               <label for="ticketNumber">電子機票號碼</label><input id="ticketNumber" name="ticketNumber" value="061-2026111906" maxlength="19" class="mono">
-              <div class="field-grid"><div><label for="baggage">託運行李</label><select id="baggage" name="baggage"><option value="0 PC">無託運行李</option value="1 PC / 23 KG">1 件／23 KG</option value="2 PC / 23 KG">2 件／各 23 KG</option value="2 PC / 32 KG" selected>2 件／各 32 KG</option><option value="3 PC / 32 KG">3 件／各 32 KG</option></select></div><div><label for="status">旅客待遇</label><select id="status" name="status"><option value="PRIORITY" selected>優先登機</option><option value="STANDARD">一般登機</option><option value="LOUNGE ACCESS">貴賓室禮遇</option></select></div></div>
+              <div class="field-grid"><div><label for="baggage">託運行李</label><select id="baggage" name="baggage"><option value="0 PC">無託運行李</option><option value="1 PC / 23 KG">1 件／23 KG</option><option value="2 PC / 23 KG">2 件／各 23 KG</option><option value="2 PC / 32 KG" selected>2 件／各 32 KG</option><option value="3 PC / 32 KG">3 件／各 32 KG</option></select></div><div><label for="status">旅客待遇</label><select id="status" name="status"><option value="PRIORITY" selected>優先登機</option><option value="STANDARD">一般登機</option><option value="LOUNGE ACCESS">貴賓室禮遇</option></select></div></div>
             </div>
           </section>
 
@@ -92,7 +92,7 @@
             </div>
             <div class="form-section">
               <h3><span class="section-index">06</span>票面細節</h3>
-              <label for="accent">自訂航空主色</label><div class="color-input"><input type="color" id="accent" name="accent" value="#213b51"><span id="colorValue" class="mono">#213B51</span><span>套用至票頭與重點欄位</span></div>
+              <label for="accent">自訂航空主色</label><div class="color-input"><input type="color" id="accent" name="accent" value="#213b51"><label for="accentHex" class="sr-only">航空主色色碼</label><input type="text" id="accentHex" name="accentHex" class="mono" value="#213B51" maxlength="7" pattern="#[A-Fa-f0-9]{6}" aria-label="航空主色色碼"><span>套用至票頭與重點欄位</span></div>
               <label class="switch-row" for="showStub"><span>顯示可撕式票根<small>保留紙本登機證的經典比例</small></span><input id="showStub" name="showStub" type="checkbox" role="switch" checked></label>
               <label class="switch-row" for="showBarcode"><span>顯示裝飾條碼<small>不含有效票務資料</small></span><input id="showBarcode" name="showBarcode" type="checkbox" role="switch" checked></label>
               <label class="switch-row" for="showMessage"><span>顯示票面寄語<small>為這趟旅程留下一句話</small></span><input id="showMessage" name="showMessage" type="checkbox" role="switch" checked></label>
